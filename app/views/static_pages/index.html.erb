@@ -15,29 +15,6 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', e => {
-
-        const form = document.getElementById('new-form');
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            const text = document.getElementsByClassName('new-todo')[0];
-            console.log("task: ", text.value);
-            let payload = {
-                task: {title: text.value}
-            }
-            const csrfToken = document.querySelector("[name='csrf-token']").content
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-Token': csrfToken,
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                })
-                .then(resp => resp.json())
-                .then(data => console.log('Success:', data))
-                .catch(err => console.log('Error:', err))
-        })
         
         const taskHtml = (task) => {
             let checkedStatus = task.done ? "checked" : "";
@@ -83,5 +60,35 @@
             
         })
         .catch(err => console.log('Fetch error', err))
+
+        const form = document.getElementById('new-form');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const text = document.getElementsByClassName('new-todo')[0];
+            console.log("task: ", text.value);
+            let payload = {
+                task: {title: text.value}
+            }
+            const csrfToken = document.querySelector("[name='csrf-token']").content
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': csrfToken,
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(resp => resp.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    let htmlString = taskHtml(data);
+                    const ulTodos = document.getElementsByClassName('todo-list')[0];
+                    ulTodos.innerHTML += htmlString;
+                    const task = document.getElementsByClassName('toggle')[0]
+                    task.addEventListener('click', toggleTask);
+                })
+                .catch(err => console.log('Error:', err))
+        })
     })
 </script>
