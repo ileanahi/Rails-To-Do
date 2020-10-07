@@ -2,7 +2,7 @@
     <header class="header">
         <h1>todos</h1>
         <form id="new-form">
-            <input type="text" class="new-todo" />
+            <input type="text" class="new-todo" placeholder="What do we need to do today?" />
         </form>
     </header>
 
@@ -12,4 +12,10 @@
         </ul>
     </section>
 </section>
+<section class="author">
+  A <%= link_to "todo-mvc", "http://todomvc.com" %>
+  application, built by
+  <%= link_to "Ileana Argyris", "https://argyrisileana.com/" %>
+</section>
+
 <%= javascript_pack_tag 'tasks' %>
