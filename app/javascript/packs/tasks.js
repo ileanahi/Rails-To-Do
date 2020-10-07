@@ -1,8 +1,11 @@
 document.addEventListener('DOMContentLoaded', e => {
-        
+    let htmlString = '';
+    const url = './tasks/';
+
     const taskHtml = (task) => {
         let checkedStatus = task.done ? "checked" : "";
-        let ele = `<li><div class="view"><input class="toggle" type="checkbox" data-id="${task.id}" ${checkedStatus}><label>${task.title}</label></div></li>`
+        let liClass = task.done ? "completed" : "";
+        let ele = `<li id="listItem-${task.id}" class="${liClass}"><div class="view"><input class="toggle" type="checkbox" data-id="${task.id}" ${checkedStatus}><label>${task.title}</label></div></li>`
         return ele
     }
 
@@ -23,12 +26,16 @@ document.addEventListener('DOMContentLoaded', e => {
                 body: JSON.stringify(data)
             })
             .then(resp => resp.json())
-            .then(data => console.log('Success:', data))
+            .then(data => {
+                console.log('Success:', data)
+                let liHtml = taskHtml(data);
+                let li = document.getElementById(`listItem-${data.id}`)
+                li.replaceWith(document.createRange().createContextualFragment(liHtml));
+            })
             .catch(err => console.log('Error:', err))
     }
 
-    let htmlString = '';
-    const url = './tasks/';
+    
     fetch(url)
     .then(resp => resp.json())
     .then(data => {
@@ -71,6 +78,7 @@ document.addEventListener('DOMContentLoaded', e => {
                 ulTodos.innerHTML += htmlString;
                 const task = document.getElementsByClassName('toggle')[0]
                 task.addEventListener('click', toggleTask);
+                document.getElementsByClassName('new-todo')[0].value = '';
             })
             .catch(err => console.log('Error:', err))
     })
