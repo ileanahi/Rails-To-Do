@@ -21,6 +21,22 @@
             e.preventDefault();
             const text = document.getElementsByClassName('new-todo')[0];
             console.log("task: ", text.value);
+            let payload = {
+                task: {title: text.value}
+            }
+            const csrfToken = document.querySelector("[name='csrf-token']").content
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-Token': csrfToken,
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(resp => resp.json())
+                .then(data => console.log('Success:', data))
+                .catch(err => console.log('Error:', err))
         })
         
         const taskHtml = (task) => {
@@ -45,7 +61,7 @@
                     },
                     body: JSON.stringify(data)
                 })
-                .then(resp => resp.text())
+                .then(resp => resp.json())
                 .then(data => console.log('Success:', data))
                 .catch(err => console.log('Error:', err))
         }
