@@ -13,22 +13,42 @@
 <script>
     document.addEventListener('DOMContentLoaded', e => {
         let htmlString = '';
-
-        fetch('./tasks')
+        const url = './tasks/';
+        fetch(url)
         .then(resp => resp.json())
         .then(data => {
             data.forEach(task => {
                 let checkedStatus = task.done ? "checked" : "";
-                let ele = `<li><div class="view"><input class="toggle" type="checkbox" ${checkedStatus}><label>${task.title}</label></div></li>`
+                let ele = `<li><div class="view"><input class="toggle" type="checkbox" data-id="${task.id}" ${checkedStatus}><label>${task.title}</label></div></li>`
                 htmlString += ele;
             });
-            console.log(htmlString);
             let ulTodo = document.getElementsByClassName('todo-list')[0];
             ulTodo.innerHTML = htmlString;
+
+            document.querySelectorAll('.toggle').forEach(task => {
+                task.addEventListener('change', e => {
+                    const taskId = e.target.dataset.id;
+                    
+                    const doneValue = Boolean(e.target.checked);
+
+                    data = {"task": {"done": doneValue}}
+                    const csrfToken = document.querySelector("[name='csrf-token']").content
+
+                    fetch(url + taskId, {
+                        method: 'PUT',
+                        headers: {
+                            'X-CSRF-Token': csrfToken,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(resp => resp.text())
+                    .then(data => console.log('Success:', data))
+                    .catch(err => console.log('Error:', err))
+                })
+            })
+            
         })
         .catch(err => console.log('Fetch error', err))
-
-        
-
     })
 </script>
