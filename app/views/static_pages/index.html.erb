@@ -1,6 +1,9 @@
 <section class="todoapp">
     <header class="header">
         <h1>todos</h1>
+        <form id="new-form">
+            <input type="text" class="new-todo" />
+        </form>
     </header>
 
     <section class="main">
@@ -12,6 +15,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', e => {
+
+        const form = document.getElementById('new-form');
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            const text = document.getElementsByClassName('new-todo')[0];
+            console.log("task: ", text.value);
+        })
         
         const taskHtml = (task) => {
             let checkedStatus = task.done ? "checked" : "";
